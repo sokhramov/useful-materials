@@ -14,6 +14,7 @@
 #                                                                                                                                                   #
 #                                        !!! Do not execute CMakeLists in project directory !!!                                                     #
 #                                                                                                                                                   #
+#   6.  Use cmake --install . to copy executable files in output directory                                                                          #
 #                                                                                                                                                   #
 #####################################################################################################################################################
 
@@ -201,8 +202,8 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
 
 
 install(TARGETS ${PROJECT_NAME}.elf
-                DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin
+                DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/output
                 )
 install(FILES ${HEX_FILE}   ${BIN_FILE}
-                DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin
+                DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/output
                 )   
