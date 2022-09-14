@@ -1,0 +1,261 @@
+#####################################################################################################################################################
+#                                       ==============================================================================                              #
+#                                                               ##### How to use CMakeLists #####                                                   #
+#                                       ==============================================================================                              #
+#                                                                                                                                                   #
+#                                                                                                                                                   #
+#   1.  Requirements: CMake 3.17    C11     CXX17                                                                                                   #
+#   2.  Create MakeFile project using STM32CubeMX with option "Copy only necessary libraries"                                                       #
+#   3.  Copy this file into project's directory                                                                                                     #
+#   4.  Add user source files (line 172) and included directories (line 126) into this file                                                         #
+#   5.  Execute this file and set next variables:   USE_CXX                     (OFF/ON                     default OFF)                            #
+#                                                   USER_PROJECT_NAME           (default default_name)                                              #
+#                                                   USER_CMAKE_BUILD_TYPE            (Release/RelWithDebInfo/MinSizeRel/Debug  default Debug)       #
+#                                                   USER_CMAKE_PREFIX                (default arm-none-eabi)                                        #
+#                                                   MCPU                        (default NONE)                                                      #
+#                                                   USE_SOFT_FLOAT_ABI                  (OFF/ON                 default OFF)                        #
+#                                                   if USE_SOFT_FLOAT_ABI = OFF                                                                     #
+#                                                       MFPU                            (default NONE)                                              #
+#                                                       MCORE                           (default NONE)                                              #
+#                                                                                                                                                   #
+#                                                   LINKER                        (linker file .s           default NONE)                           #
+#                                                   LINKER_SCRIPT                 (.ld file                 default NONE)                           #
+#                                                                                                                                                   #
+#                                                                                                                                                   #
+#                                                                                                                                                   #
+#                                                       In the example STM32F4 is used                                                              #
+#                                                                                                                                                   #
+#####################################################################################################################################################
+
+
+cmake_minimum_required(VERSION 3.17)
+
+
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_VERSION 1)
+
+
+set(DEFAULT_PROJECT_NAME "default_name")
+if(USER_PROJECT_NAME)
+    set(DEFAULT_PROJECT_NAME ${USER_PROJECT_NAME})    
+endif(USER_PROJECT_NAME)
+
+
+set(CMAKE_BUILD_TYPE Debug)
+if(USER_CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE ${USER_CMAKE_BUILD_TYPE})
+endif(USER_CMAKE_BUILD_TYPE)
+
+
+option(USE_SOFT_FLOAT_ABI OFF)
+if(USE_SOFT_FLOAT_ABI)
+    set(MFLOAT_ABI soft)
+else()
+    set(MFLOAT_ABI hard)
+endif()
+
+
+set(CMAKE_PREFIX arm-none-eabi)
+if(USER_CMAKE_PREFIX)
+    set(CMAKE_PREFIX ${USER_CMAKE_FILE})
+endif(USER_CMAKE_PREFIX)
+
+
+option(USE_CXX OFF)
+
+
+set(CMAKE_C_COMPILER ${CMAKE_PREFIX}-gcc)
+set(CMAKE_ASM_COMPILER ${CMAKE_PREFIX}-gcc)
+set(CMAKE_AR ${CMAKE_PREFIX}-ar)
+set(CMAKE_OBJCOPY ${CMAKE_PREFIX}-objcopy)
+set(CMAKE_OBJDUMP ${CMAKE_PREFIX}-objdump)
+set(SIZE ${CMAKE_PREFIX}-size)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+
+
+if(USE_CXX)
+    project(${DEFAULT_PROJECT_NAME} C CXX ASM)
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_COMPILER ${CMAKE_PREFIX}-g++)
+else()
+    project(${DEFAULT_PROJECT_NAME} C ASM)
+endif()
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+
+message("Variables:
+        CMAKE_PREFIX     =  ${CMAKE_PREFIX}
+        CMAKE_BUILD_TYPE =  ${CMAKE_BUILD_TYPE}
+        USE_CXX          =  ${USE_CXX}
+        CMAKE_PREFIX     =  ${CMAKE_PREFIX}
+        MCPU             =  ${MCPU}
+        MFPU             =  ${MFPU}
+        MCORE            =  ${MCORE}
+        "
+        )          
+
+if(("${MCPU}" STREQUAL "") OR ("${MFPU}" STREQUAL ""))
+    message(FATAL_ERROR
+            "\nError! MCPU or MFPU were not set!"
+            )
+endif(("${MCPU}" STREQUAL "") OR ("${MFPU}" STREQUAL ""))
+
+if(("${LINKER}" STREQUAL "") OR ("${LINKER_SCRIPT}" STREQUAL ""))
+    message(WARNING
+            "\nLINKER or LINKER_SCRIPT were not set!\nTarget may be created with errors!")   
+endif(("${LINKER}" STREQUAL "") OR ("${LINKER_SCRIPT}" STREQUAL ""))
+
+
+string(REGEX MATCH "[^-]m*$" MCORE ${MCPU})
+add_compile_options(-mfloat-abi=${MFLOAT_ABI})
+
+if (("${MFLOAT_ABI}" STREQUAL "hard") AND ("${MCPU}" STRGREATER "") AND ("${MFPU}" STRGREATER ""))
+# hardware floating point
+    add_compile_definitions(ARM_MATH_CM${MCORE}; ARM_MATH_MATRIX_CHECK; ARM_MATH_ROUNDING)
+    add_compile_options(-mcpu=${MCPU} -mthumb -mfpu=${MFPU})
+    add_link_options(-mcpu=${MCPU} -mthumb -mfloat-abi=${MFLOAT_ABI} -mfpu=${MFPU})
+    message("ok")
+elseif (("${MFLOAT_ABI}" STREQUAL "soft") AND ("${MCPU}" STRGREATER ""))
+# software floating point    
+    add_compile_options(-mcpu=${MCPU} -mthumb -mthumb-interwork)
+    add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0)
+endif()
+
+
+ 
+
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+    message(STATUS "Maximum optimization for speed")
+    add_compile_options(-Ofast)
+
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+    message(STATUS "Maximum optimization for speed, debug info included")
+    add_compile_options(-Ofast -g)
+
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
+    message(STATUS "Maximum optimization for size")
+    add_compile_options(-Os)
+
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    message(STATUS "Minimal optimization, debug info included")
+    add_compile_options(-Og -g)
+
+endif ()
+
+ 
+
+include_directories(
+    #Core/Inc
+    #Drivers/STM32F4xx_HAL_Driver/Inc
+    #Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
+    #Middlewares/Third_Party/FreeRTOS/Source/include
+    #Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
+    #Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+    #Drivers/CMSIS/Device/ST/STM32F4xx/Include
+    #Drivers/CMSIS/Include
+
+    # You can add your's dir with headers
+
+    )
+
+
+add_definitions(
+                #write here your MC name f.e. 
+                -DSTM32F407xx                 
+                #uncomment next line if you use HAL driver 
+                -DUSE_HAL_DRIVER
+                #and other necessary definitions
+
+                )
+
+
+#message(${LINKER})
+
+file(GLOB SOURCES
+    #example for stm32f407
+
+    #Core/Src/main.c
+    #Core/Src/gpio.c
+    #Core/Src/freertos.c
+    #Core/Src/stm32f4xx_it.c
+    #Core/Src/stm32f4xx_hal_msp.c
+    #Core/Src/stm32f4xx_hal_timebase_tim.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c
+    #Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c
+    #Core/Src/system_stm32f4xx.c
+    #Middlewares/Third_Party/FreeRTOS/Source/croutine.c
+    #Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
+    #Middlewares/Third_Party/FreeRTOS/Source/list.c
+    #Middlewares/Third_Party/FreeRTOS/Source/queue.c
+    #Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c
+    #Middlewares/Third_Party/FreeRTOS/Source/tasks.c
+    #Middlewares/Third_Party/FreeRTOS/Source/timers.c
+    #Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c
+    #Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+    #Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c  
+
+    if("${LINKER}" STRGREATER "")
+        ${LINKER}
+    endif()
+    # You can add your's source files and linker files
+)
+
+
+add_link_options(-Wl,-gc-sections,--print-memory-usage)
+
+if("${MAP_FILE}" STRGREATER "")
+    add_link_options(-Map=${MAP_FILE})
+endif("${MAP_FILE}"  STRGREATER "")
+
+if("${MCPU}" STRGREATER "")
+    add_link_options(-mcpu=${MCPU} -mthumb -mthumb-interwork)
+endif("${MCPU}" STRGREATER "")
+
+if("${LINKER_SCRIPT}" STRGREATER "")
+    add_link_options(-T ${LINKER_SCRIPT})
+endif("${LINKER_SCRIPT}" STRGREATER "")
+
+# this options for C++
+if(USE_CXX)
+    add_link_options(-specs=nosys.specs -lstdc++)
+endif()
+
+
+add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
+
+
+set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
+set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
+
+install(TARGETS ${PROJECT_NAME}.elf
+DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/output
+)
+install(FILES ${HEX_FILE}   ${BIN_FILE}
+DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/output
+) 
+
+add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -Oihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${HEX_FILE}
+        COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
+        COMMAND cmake --install .
+        COMMENT "Building: 
+                ${HEX_FILE}
+                ${BIN_FILE}\n\n\n\n${PROJECT_NAME}.hex, ${PROJECT_NAME}.bin and ${PROJECT_NAME}.elf are located in ${CMAKE_CURRENT_SOURCE_DIR}/output
+                "
+                )
