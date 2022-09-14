@@ -5,11 +5,15 @@ __CMake:__
 - [An Introduction to Modern CMake](https://cliutils.gitlab.io/modern-cmake/) - учебник CMake/CMake guide
 - [https://github.com/ObKo/stm32-cmake](https://github.com/ObKo/stm32-cmake) - полезный репозиторий для работы с arm-none-eabi/useful repo to build stm32 projects
 - [Better CMake](https://www.youtube.com/playlist?list=PL8i3OhJb4FNV10aIZ8oF0AA46HgA2ed8g) - плейлист о применении CMake / playlist with CMake usage tutorial
+- [CubeMX + CMake](https://zenembed.com/cmake-cubemx) - how to write CMakeLists.txt using CubeMX Makefiles 
 
 
 __CMSIS:__
 - [STM32. CMSIS #0. Основные команды](https://www.youtube.com/watch?v=q8Y4mMofvlo&list=PL9lkEHy8EJU9rsMIawXlRMQgcplo_Yezr&ab_channel=NR.electronics) - плейлист по CMSIS с нуля/CMSIS playlist on russian
 
+
+__Embedded systems:__
+- [Introduction to Embedded Systems](https://www.coursera.org/learn/introduction-embedded-systems/)  - основы для понимания / basics
 
 
 __Raspberry Pi 4:__
