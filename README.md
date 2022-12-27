@@ -16,12 +16,12 @@ __Embedded systems:__
 - [Introduction to Embedded Systems](https://www.coursera.org/learn/introduction-embedded-systems/)  - основы для понимания / basics
 
 __FPGA:__
-- [FPGA basics](https://drive.google.com/file/d/1ajMGKmnFGHCyy38IsgC-U8IyT3H-ekiF/view?usp=sharing) - FPGA basics and practice on russian
+- [FPGA basics](https://github.com/sokhramov/useful-materials/blob/main/XilinxCourse_v2.2.pdf) - FPGA basics and practice on russian
 
 __ZYNQ:__
 - [Vitis/Vivado/Vitis manual](https://www.xilinx.com/content/dam/xilinx/support/documents/sw_manuals/xilinx2019_1/ug1165-zynq-embedded-design-tutorial.pdf)
 - [ZYNQ tutorial playlist](https://www.youtube.com/playlist?list=PL_Nji0JOuXg3QpmlzqZmDFDBcIIflpdwA)
-- [MIO/EMIO/PI GPIO ](https://russianblogs.com/article/5669127644/)
+- [MIO/EMIO/PI GPIO](https://russianblogs.com/article/5669127644/)
 - [Download variants](https://allaboutfpga.com/boot-from-sd-card-spi-flash-using-edge-zynq-soc-fpga-kit/)
 - [Guide dual core 1](https://www.hackster.io/whitney-knitter/dual-arm-hello-world-on-zynq-using-vitis-9fc8b7) and [Guide dual core 2](https://docs.xilinx.com/v/u/en-US/xapp1079-amp-bare-metal-cortex-a9) - dual core tutorial
 - [ZYNQ interupts](https://prof.bht-berlin.de/fileadmin/prof/svoss/CES/Datenblaetter/how-to-use-interrupts-on-zynqsoc.pdf)
