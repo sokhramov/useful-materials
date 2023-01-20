@@ -13,6 +13,8 @@ __CMSIS:__
 
 
 __Embedded systems:__
+- [Coding rules English](https://barrgroup.com/sites/default/files/barr_c_coding_standard_2018.pdf)
+- [Coding rules Russian](https://github.com/sokhramov/useful-materials/blob/main/MichaelBarr_Embedded_C_CodingStandard_ru.pdf)
 - [Introduction to Embedded Systems](https://www.coursera.org/learn/introduction-embedded-systems/)  - основы для понимания / basics
 
 
