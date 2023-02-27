@@ -1,3 +1,7 @@
+__Algorithms:__
+- (Тренировки по алгоритмам Яндекс)[https://www.youtube.com/playlist?list=PL6Wui14DvQPySdPv5NUqV3i8sDbHkCKC5] - см. также Тренировки 2.0 и 3.0
+
+
 __CMake:__
 - [Build STM32 CMake projects on Windows | VIDEO 48](https://www.youtube.com/watch?v=KbnHT1SoOj0&t=319s&ab_channel=MatejBlag%C5%A1i%C4%8D) - установка необходимого софта на Windows/download necessary soft to Windows
 - [Visual Studio Code for C/C++ with ARM Cortex-M: Part 2 – Project](https://mcuoneclipse.com/2021/05/04/visual-studio-code-for-c-c-with-arm-cortex-m-part-2/) - пример проекта с CMake/cMake project example
