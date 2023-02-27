@@ -1,5 +1,5 @@
 __Algorithms:__
-- (Тренировки по алгоритмам Яндекс)[https://www.youtube.com/playlist?list=PL6Wui14DvQPySdPv5NUqV3i8sDbHkCKC5] - см. также Тренировки 2.0 и 3.0
+- [Тренировки по алгоритмам Яндекс](https://www.youtube.com/playlist?list=PL6Wui14DvQPySdPv5NUqV3i8sDbHkCKC5) - см. также Тренировки 2.0 и 3.0
 
 
 __CMake:__
